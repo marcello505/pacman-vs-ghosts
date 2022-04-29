@@ -9,20 +9,13 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
+
+import com.github.chen0040.rl.learning.qlearn.QLearner;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
-import pacman.controllers.KeyBoardInput;
-import pacman.controllers.examples.AggressiveGhosts;
-import pacman.controllers.examples.Legacy;
-import pacman.controllers.examples.Legacy2TheReckoning;
-import pacman.controllers.examples.NearestPillPacMan;
-import pacman.controllers.examples.NearestPillPacManVS;
-import pacman.controllers.examples.RandomGhosts;
-import pacman.controllers.examples.RandomNonRevPacMan;
-import pacman.controllers.examples.RandomPacMan;
 import pacman.controllers.examples.StarterGhosts;
-import pacman.controllers.examples.StarterPacMan;
-import pacman.entries.pacman.QLearningPacMan;
+import pacman.entries.pacman.QAgentPacMan;
+import pacman.entries.pacman.QLearnerPacMan;
 import pacman.game.Game;
 import pacman.game.GameView;
 
@@ -65,8 +58,8 @@ public class Executor
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
 //		exec.runGameTimed(new StarterPacMan(),new StarterGhosts(),visual);
 //		exec.runGameTimed(new HumanController(new KeyBoardInput()),new StarterGhosts(),visual);
-//		exec.runExperiment(new QLearningPacMan(), new StarterGhosts(), 9000);
-		exec.runGameTimed(new QLearningPacMan(), new StarterGhosts(), visual);
+		exec.runExperiment(new QLearnerPacMan(), new StarterGhosts(), 9000);
+//		exec.runGameTimed(new QAgentPacMan(), new StarterGhosts(), visual);
 		//*/
 		
 		/*
@@ -96,6 +89,7 @@ public class Executor
      * @param ghostController The Ghosts controller
      * @param trials The number of trials to be executed
      */
+
     public void runExperiment(Controller<MOVE> pacManController,Controller<EnumMap<GHOST,MOVE>> ghostController,int trials)
     {
     	double avgScore=0;
@@ -106,7 +100,7 @@ public class Executor
 		for(int i=0;i<trials;i++)
 		{
 			game=new Game(rnd.nextLong());
-			
+
 			while(!game.gameOver())
 			{
 		        game.advanceGame(pacManController.getMove(game.copy(),System.currentTimeMillis()+DELAY),
@@ -114,6 +108,7 @@ public class Executor
 			}
 			
 			avgScore+=game.getScore();
+			if(pacManController instanceof QLearnerPacMan qLearnerPacMan) qLearnerPacMan.updateStrategy(new Game(123), (double)game.getScore());
 			System.out.println(i+"\t"+game.getScore());
 		}
 		

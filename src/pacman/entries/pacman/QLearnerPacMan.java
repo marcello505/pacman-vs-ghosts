@@ -1,11 +1,11 @@
 package pacman.entries.pacman;
 
+import com.github.chen0040.rl.learning.qlearn.QAgent;
 import com.github.chen0040.rl.learning.qlearn.QLearner;
 import pacman.controllers.Controller;
 import pacman.game.Constants;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
-import com.github.chen0040.rl.learning.qlearn.QAgent;
 import pacman.game.internal.Node;
 
 /*
@@ -13,23 +13,28 @@ import pacman.game.internal.Node;
  * fill in the getAction() method. Any additional classes you write should either
  * be placed in this package or sub-packages (e.g., game.entries.pacman.mypackage).
  */
-public class QLearningPacMan extends Controller<MOVE>
+public class QLearnerPacMan extends Controller<MOVE>
 {
 	private MOVE myMove=MOVE.NEUTRAL;
-	private QAgent agent;
+	private int lastAction = 0;
+	private int lastState = 0;
+	private QLearner agent;
 
-	public QLearningPacMan(){
-		agent = new QAgent(100, 5);
-		agent.start(0);
+	public QLearnerPacMan(){
+		agent = new QLearner(100, 5);
 	}
 	
 	public MOVE getMove(Game game, long timeDue) 
 	{
-		agent.update(agent.getPrevAction(), convertGameStateToInt(game), game.getScore());
+		lastState = convertGameStateToInt(game);
+		lastAction = agent.selectAction(lastState).getIndex();
 
-		myMove = getMoveBasedOnActionId(agent.selectAction().getIndex());
-
+		myMove = getMoveBasedOnActionId(lastAction);
 		return myMove;
+	}
+
+	public void updateStrategy(Game newGame, double reward){
+		agent.update(lastState, lastAction, convertGameStateToInt(newGame), reward);
 	}
 
 	private int convertGameStateToInt(Game game){
