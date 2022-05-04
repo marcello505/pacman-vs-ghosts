@@ -9,6 +9,8 @@ import pacman.game.internal.Node;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 /*
  * This is the class you need to modify for your entry. In particular, you need to
@@ -71,7 +73,14 @@ public class QLearnerPacMan extends Controller<MOVE>
 		int sueDistance = game.getShortestPathDistance(pacmanIndex, sueIndex);
 
 		Node node = game.getCurrentMaze().graph[nodeIndex];
-		int closestPillIndex = game.getClosestNodeIndexFromNodeIndex(game.getPacmanCurrentNodeIndex(), game.getActivePillsIndices(), Constants.DM.MANHATTAN);
+
+		//Get closestPill
+		int[] activePills = game.getActivePillsIndices();
+		int[] activePowerPills = game.getActivePowerPillsIndices();
+		int[] combinedPillIndices = new int[activePills.length + activePowerPills.length];
+		System.arraycopy(activePills, 0, combinedPillIndices, 0, activePills.length);
+		System.arraycopy(activePowerPills, 0, combinedPillIndices, activePills.length, activePowerPills.length);
+		int closestPillIndex = game.getClosestNodeIndexFromNodeIndex(game.getPacmanCurrentNodeIndex(), combinedPillIndices, Constants.DM.MANHATTAN);
 
 		if(blinkyIndex == nodeIndex
 			|| inkyIndex == nodeIndex
@@ -97,7 +106,7 @@ public class QLearnerPacMan extends Controller<MOVE>
 		if(node.powerPillIndex >= 0 || node.pillIndex >= 0){
 			return 2;//pill!!!
 		}
-		if(game.getNextMoveTowardsTarget(pacmanIndex, closestPillIndex, Constants.DM.MANHATTAN) == move){
+		if(closestPillIndex != -1 && game.getNextMoveTowardsTarget(pacmanIndex, closestPillIndex, Constants.DM.MANHATTAN) == move){
 			return 1;//this way for pill
 		}
 		return 0;//empty node
