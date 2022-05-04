@@ -13,6 +13,8 @@ import java.util.Random;
 import com.github.chen0040.rl.learning.qlearn.QLearner;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
+import pacman.controllers.KeyBoardInput;
+import pacman.controllers.examples.RandomGhosts;
 import pacman.controllers.examples.StarterGhosts;
 import pacman.entries.pacman.QAgentPacMan;
 import pacman.entries.pacman.QLearnerPacMan;
@@ -58,7 +60,10 @@ public class Executor
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
 //		exec.runGameTimed(new StarterPacMan(),new StarterGhosts(),visual);
 //		exec.runGameTimed(new HumanController(new KeyBoardInput()),new StarterGhosts(),visual);
-		exec.runExperiment(new QLearnerPacMan(), new StarterGhosts(), 9000);
+		QLearnerPacMan qLearnerPacMan = new QLearnerPacMan();
+		exec.runExperiment(qLearnerPacMan, new RandomGhosts(), 500000);
+		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/500000_generations.json");
+
 //		exec.runGameTimed(new QAgentPacMan(), new StarterGhosts(), visual);
 		//*/
 		
