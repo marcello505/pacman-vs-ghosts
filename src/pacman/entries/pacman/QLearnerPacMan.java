@@ -7,10 +7,13 @@ import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 import pacman.game.internal.Node;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /*
  * This is the class you need to modify for your entry. In particular, you need to
@@ -59,10 +62,10 @@ public class QLearnerPacMan extends Controller<MOVE>
 	private int getNeighborStatus(Game game, int pacmanIndex, MOVE move){
 		int nodeIndex = game.getNeighbour(pacmanIndex, move);
 		if (nodeIndex == -1){
-			return 5; //wall
+			return 6; //wall
 		}
 
-		final int DANGER_DISTANCE = 3;
+		final int DANGER_DISTANCE = 6;
 		int inkyIndex = game.getGhostCurrentNodeIndex(Constants.GHOST.INKY);
 		int inkyDistance = game.getShortestPathDistance(pacmanIndex, inkyIndex);
 		int blinkyIndex = game.getGhostCurrentNodeIndex(Constants.GHOST.BLINKY);
@@ -86,21 +89,25 @@ public class QLearnerPacMan extends Controller<MOVE>
 			|| inkyIndex == nodeIndex
 			|| pinkyIndex == nodeIndex
 			|| sueIndex == nodeIndex){
-			return 4; //a g-g-g-ghost
+			return 5; //a g-g-g-ghost
 		}
 		if(inkyDistance < DANGER_DISTANCE || blinkyDistance < DANGER_DISTANCE || pinkyDistance < DANGER_DISTANCE || sueDistance < DANGER_DISTANCE){
 			//Ghost is close
 			if (inkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, inkyIndex, Constants.DM.PATH) == move){
-				return 3;
+				if(game.getGhostEdibleTime(Constants.GHOST.INKY) > 0) return 4;
+				else return 3;
 			}
 			if (blinkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, blinkyIndex, Constants.DM.PATH) == move){
-				return 3;
+				if(game.getGhostEdibleTime(Constants.GHOST.BLINKY) > 0) return 4;
+				else return 3;
 			}
 			if (pinkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, pinkyIndex, Constants.DM.PATH) == move){
-				return 3;
+				if(game.getGhostEdibleTime(Constants.GHOST.PINKY) > 0) return 4;
+				else return 3;
 			}
 			if (sueDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, sueIndex, Constants.DM.PATH) == move){
-				return 3;
+				if(game.getGhostEdibleTime(Constants.GHOST.SUE) > 0) return 4;
+				else return 3;
 			}
 		}
 		if(node.powerPillIndex >= 0 || node.pillIndex >= 0){
@@ -135,6 +142,23 @@ public class QLearnerPacMan extends Controller<MOVE>
 			writer.close();
 		}
 		catch (Exception e){
+
+		}
+	}
+
+	public void loadModel(String path){
+		try{
+			File myObj = new File(path);
+			Scanner myReader = new Scanner(myObj);
+			String json = "";
+			while (myReader.hasNextLine()) {
+				json = myReader.nextLine();
+			}
+			myReader.close();
+			this.agent = QLearner.fromJson(json);
+		}
+		catch (Exception e){
+			System.out.println(e);
 
 		}
 	}

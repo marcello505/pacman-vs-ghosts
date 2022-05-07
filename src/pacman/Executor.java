@@ -60,11 +60,12 @@ public class Executor
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
 //		exec.runGameTimed(new StarterPacMan(),new StarterGhosts(),visual);
 //		exec.runGameTimed(new HumanController(new KeyBoardInput()),new StarterGhosts(),visual);
+//		qLearnerPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/1000000_generations.json");
 		QLearnerPacMan qLearnerPacMan = new QLearnerPacMan();
-		exec.runExperiment(qLearnerPacMan, new RandomGhosts(), 1000000);
-		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/1000000_generations.json");
+		exec.runExperiment(qLearnerPacMan, new RandomGhosts(), 5000000);
+		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_randomghosts.json");
+//		exec.runGameTimed(qLearnerPacMan, new StarterGhosts(), visual);
 
-//		exec.runGameTimed(new QAgentPacMan(), new StarterGhosts(), visual);
 		//*/
 		
 		/*
@@ -101,10 +102,12 @@ public class Executor
     	
     	Random rnd=new Random(0);
 		Game game;
-		
+
 		for(int i=0;i<trials;i++)
 		{
 			game=new Game(rnd.nextLong());
+			game.pacman.numberOfLivesRemaining = 1;
+
 
 			while(!game.gameOver())
 			{
@@ -161,7 +164,7 @@ public class Executor
     public void runGameTimed(Controller<MOVE> pacManController,Controller<EnumMap<GHOST,MOVE>> ghostController,boolean visual)
 	{
 		Game game=new Game(0);
-		
+
 		GameView gv=null;
 		
 		if(visual)

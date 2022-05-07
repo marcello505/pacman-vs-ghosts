@@ -43,7 +43,7 @@ public final class Game
 	private boolean gameOver, pacmanWasEaten, pillWasEaten, powerPillWasEaten;
 	private EnumMap<GHOST,Boolean> ghostsEaten;
 	//the data relating to pacman and the ghosts are stored in respective data structures for clarity
-	private PacMan pacman;
+	public PacMan pacman;
 	private EnumMap<GHOST, Ghost> ghosts;
 
 	//mazes are only loaded once since they don't change over time
