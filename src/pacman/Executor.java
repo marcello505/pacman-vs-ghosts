@@ -60,10 +60,10 @@ public class Executor
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
 //		exec.runGameTimed(new StarterPacMan(),new StarterGhosts(),visual);
 //		exec.runGameTimed(new HumanController(new KeyBoardInput()),new StarterGhosts(),visual);
-//		qLearnerPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/1000000_generations.json");
 		QLearnerPacMan qLearnerPacMan = new QLearnerPacMan();
-		exec.runExperiment(qLearnerPacMan, new RandomGhosts(), 5000000);
-		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_randomghosts.json");
+//		qLearnerPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_randomghosts.json");
+		exec.runExperiment(qLearnerPacMan, new StarterGhosts(), 5000000);
+		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_starterghosts.json");
 //		exec.runGameTimed(qLearnerPacMan, new StarterGhosts(), visual);
 
 		//*/
