@@ -16,6 +16,7 @@ import pacman.controllers.HumanController;
 import pacman.controllers.KeyBoardInput;
 import pacman.controllers.examples.RandomGhosts;
 import pacman.controllers.examples.StarterGhosts;
+import pacman.entries.ghosts.MyGhosts;
 import pacman.entries.pacman.QAgentPacMan;
 import pacman.entries.pacman.QLearnerPacMan;
 import pacman.game.Game;
@@ -59,11 +60,15 @@ public class Executor
 		boolean visual=true;
 //		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
 //		exec.runGameTimed(new StarterPacMan(),new StarterGhosts(),visual);
-//		exec.runGameTimed(new HumanController(new KeyBoardInput()),new StarterGhosts(),visual);
-		QLearnerPacMan qLearnerPacMan = new QLearnerPacMan();
+//		exec.runGameTimed(new HumanController(new KeyBoardInput()),new MyGhosts(),visual);
+//		QLearnerPacMan qLearnerPacMan = new QLearnerPacMan();
 //		qLearnerPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_randomghosts.json");
-		exec.runExperiment(qLearnerPacMan, new StarterGhosts(), 5000000);
-		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_starterghosts.json");
+		QAgentPacMan qAgentPacMan = new QAgentPacMan();
+		qAgentPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/3000000_generations_short_starterghosts.json");
+		exec.runGameTimed(qAgentPacMan, new MyGhosts(), visual);
+//		exec.runExperiment(qAgentPacMan, new StarterGhosts(), 3000000);
+//		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/3000000_generations_short_starterghosts.json");
+//		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_starterghosts.json");
 //		exec.runGameTimed(qLearnerPacMan, new StarterGhosts(), visual);
 
 		//*/
@@ -117,6 +122,7 @@ public class Executor
 			
 			avgScore+=game.getScore();
 			if(pacManController instanceof QLearnerPacMan qLearnerPacMan) qLearnerPacMan.updateStrategy(new Game(123), (double)game.getScore());
+			if(pacManController instanceof QAgentPacMan qAgentPacMan) qAgentPacMan.gameOver();
 			System.out.println(i+"\t"+game.getScore());
 		}
 		
