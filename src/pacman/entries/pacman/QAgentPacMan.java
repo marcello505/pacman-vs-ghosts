@@ -39,7 +39,7 @@ public class QAgentPacMan extends Controller<MOVE>
 		agent.update(lastAction, convertGameStateToInt(game), game.getScore() - lastScore);
 		lastScore = game.getScore();
 
-		Set<Integer> possibleActions = getPossibleMovesBasedOnGameState(game);
+		Set<Integer> possibleActions = getPossibleMovesBasedOnGameState(game, false);
 		lastAction = agent.selectAction(possibleActions).getIndex();
 		myMove = getMoveBasedOnActionId(lastAction);
 
@@ -147,8 +147,10 @@ public class QAgentPacMan extends Controller<MOVE>
 		return MOVE.NEUTRAL;
 	}
 
-	private Set<Integer> getPossibleMovesBasedOnGameState(Game game){
-		MOVE[] gamePossibleMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
+	private Set<Integer> getPossibleMovesBasedOnGameState(Game game, boolean canMoveBack){
+		MOVE[] gamePossibleMoves;
+		if(!canMoveBack) gamePossibleMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
+		else gamePossibleMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex());
 		HashSet<Integer> result = new HashSet<Integer>();
 
 		for (MOVE move : gamePossibleMoves) {

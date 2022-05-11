@@ -64,10 +64,10 @@ public class Executor
 //		QLearnerPacMan qLearnerPacMan = new QLearnerPacMan();
 //		qLearnerPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_randomghosts.json");
 		QAgentPacMan qAgentPacMan = new QAgentPacMan();
-		qAgentPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/3000000_generations_short_starterghosts.json");
-		exec.runGameTimed(qAgentPacMan, new MyGhosts(), visual);
+		qAgentPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/3000000_generations_short_starter_moveBack.json");
+		exec.runGameTimed(qAgentPacMan, new StarterGhosts(), visual);
 //		exec.runExperiment(qAgentPacMan, new StarterGhosts(), 3000000);
-//		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/3000000_generations_short_starterghosts.json");
+//		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/3000000_generations_short_starter_moveBack.json");
 //		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_starterghosts.json");
 //		exec.runGameTimed(qLearnerPacMan, new StarterGhosts(), visual);
 
