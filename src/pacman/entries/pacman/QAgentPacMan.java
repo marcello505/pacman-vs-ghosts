@@ -39,7 +39,7 @@ public class QAgentPacMan extends Controller<MOVE>
 		agent.update(lastAction, convertGameStateToInt(game), game.getScore() - lastScore);
 		lastScore = game.getScore();
 
-		Set<Integer> possibleActions = getPossibleMovesBasedOnGameState(game, false);
+		Set<Integer> possibleActions = getPossibleMovesBasedOnGameState(game, game.isJunction(game.getPacmanCurrentNodeIndex()));
 		lastAction = agent.selectAction(possibleActions).getIndex();
 		myMove = getMoveBasedOnActionId(lastAction);
 
