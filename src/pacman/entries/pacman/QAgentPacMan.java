@@ -36,10 +36,11 @@ public class QAgentPacMan extends Controller<MOVE>
 	
 	public MOVE getMove(Game game, long timeDue) 
 	{
-		agent.update(lastAction, convertGameStateToInt(game), game.getScore() - lastScore);
+		agent.update(lastAction, convertGameStateToInt(game, true), game.getScore() - lastScore);
 		lastScore = game.getScore();
 
-		Set<Integer> possibleActions = getPossibleMovesBasedOnGameState(game, game.isJunction(game.getPacmanCurrentNodeIndex()));
+//		Set<Integer> possibleActions = getPossibleMovesBasedOnGameState(game, game.isJunction(game.getPacmanCurrentNodeIndex()));
+		Set<Integer> possibleActions = getPossibleMovesBasedOnGameState(game, false);
 		lastAction = agent.selectAction(possibleActions).getIndex();
 		myMove = getMoveBasedOnActionId(lastAction);
 
@@ -52,20 +53,24 @@ public class QAgentPacMan extends Controller<MOVE>
 		agent.start(startingState);
 	}
 
-	private int convertGameStateToSimpleInt(Game game){
-		return 0;
-	}
 
-	private int convertGameStateToInt(Game game){
+	private int convertGameStateToInt(Game game, boolean simpleState){
 		int result = 0;
 		int pacmanNode = game.getPacmanCurrentNodeIndex();
-		int closestPillNode = game.getClosestNodeIndexFromNodeIndex(pacmanNode, game.getActivePillsIndices(), Constants.DM.MANHATTAN);
 
+		if(simpleState){
+			result += getSimpleNeighborStatus(game, MOVE.LEFT) << 2 * 0;
+			result += getSimpleNeighborStatus(game, MOVE.RIGHT) << 2 * 1;
+			result += getSimpleNeighborStatus(game, MOVE.UP) << 2 * 2;
+			result += getSimpleNeighborStatus(game, MOVE.DOWN) << 2 * 3;
 
-		result += getNeighborStatus(game, pacmanNode, MOVE.LEFT);
-		result += getNeighborStatus(game, pacmanNode, MOVE.RIGHT) << 3;
-		result += getNeighborStatus(game, pacmanNode, MOVE.UP) << 3 * 2;
-		result += getNeighborStatus(game, pacmanNode, MOVE.DOWN) << 3 * 3;
+		}
+		else{
+			result += getNeighborStatus(game, pacmanNode, MOVE.LEFT);
+			result += getNeighborStatus(game, pacmanNode, MOVE.RIGHT) << 3;
+			result += getNeighborStatus(game, pacmanNode, MOVE.UP) << 3 * 2;
+			result += getNeighborStatus(game, pacmanNode, MOVE.DOWN) << 3 * 3;
+		}
 
 
 		return result;
@@ -95,7 +100,7 @@ public class QAgentPacMan extends Controller<MOVE>
 		int[] combinedPillIndices = new int[activePills.length + activePowerPills.length];
 		System.arraycopy(activePills, 0, combinedPillIndices, 0, activePills.length);
 		System.arraycopy(activePowerPills, 0, combinedPillIndices, activePills.length, activePowerPills.length);
-		int closestPillIndex = game.getClosestNodeIndexFromNodeIndex(game.getPacmanCurrentNodeIndex(), combinedPillIndices, Constants.DM.MANHATTAN);
+		int closestPillIndex = game.getClosestNodeIndexFromNodeIndex(game.getPacmanCurrentNodeIndex(), combinedPillIndices, Constants.DM.PATH);
 
 		if(blinkyIndex == nodeIndex
 				|| inkyIndex == nodeIndex
@@ -129,6 +134,63 @@ public class QAgentPacMan extends Controller<MOVE>
 			return 1;//this way for pill
 		}
 		return 0;//empty node
+	}
+
+	private int getSimpleNeighborStatus(Game game, MOVE move){
+		int pacmanIndex = game.getPacmanCurrentNodeIndex();
+		int nodeIndex = game.getNeighbour(pacmanIndex, move);
+		if(nodeIndex == -1){
+			return 0; //Wall
+		}
+
+		//Get ghost info
+		final int DANGER_DISTANCE = 32;
+		int inkyIndex = game.getGhostCurrentNodeIndex(Constants.GHOST.INKY);
+		int inkyDistance = game.getShortestPathDistance(pacmanIndex, inkyIndex);
+		int blinkyIndex = game.getGhostCurrentNodeIndex(Constants.GHOST.BLINKY);
+		int blinkyDistance = game.getShortestPathDistance(pacmanIndex, blinkyIndex);
+		int pinkyIndex = game.getGhostCurrentNodeIndex(Constants.GHOST.PINKY);
+		int pinkyDistance = game.getShortestPathDistance(pacmanIndex, pinkyIndex);
+		int sueIndex = game.getGhostCurrentNodeIndex(Constants.GHOST.SUE);
+		int sueDistance = game.getShortestPathDistance(pacmanIndex, sueIndex);
+
+		//Get closestPill
+		int[] activePills = game.getActivePillsIndices();
+		int[] activePowerPills = game.getActivePowerPillsIndices();
+		int[] combinedPillIndices = new int[activePills.length + activePowerPills.length];
+		System.arraycopy(activePills, 0, combinedPillIndices, 0, activePills.length);
+		System.arraycopy(activePowerPills, 0, combinedPillIndices, activePills.length, activePowerPills.length);
+		int closestPillIndex = game.getClosestNodeIndexFromNodeIndex(game.getPacmanCurrentNodeIndex(), combinedPillIndices, Constants.DM.PATH);
+
+		if((inkyDistance != -1 && inkyDistance < DANGER_DISTANCE) || (blinkyDistance != -1 && blinkyDistance < DANGER_DISTANCE) || ( pinkyDistance != -1 && pinkyDistance < DANGER_DISTANCE) || ( sueDistance != -1 && sueDistance < DANGER_DISTANCE)){
+			//Ghost is close
+			boolean normalGhost = false;
+			boolean edibleGhost = false;
+			if (inkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, inkyIndex, Constants.DM.PATH) == move){
+				if(game.getGhostEdibleTime(Constants.GHOST.INKY) > 0) edibleGhost = true;
+				else normalGhost = true;
+			}
+			if (blinkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, blinkyIndex, Constants.DM.PATH) == move){
+				if(game.getGhostEdibleTime(Constants.GHOST.BLINKY) > 0) edibleGhost = true;
+				else normalGhost = true;
+			}
+			if (pinkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, pinkyIndex, Constants.DM.PATH) == move){
+				if(game.getGhostEdibleTime(Constants.GHOST.PINKY) > 0) edibleGhost = true;
+				else normalGhost = true;
+			}
+			if (sueDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, sueIndex, Constants.DM.PATH) == move){
+				if(game.getGhostEdibleTime(Constants.GHOST.SUE) > 0) edibleGhost = true;
+				else normalGhost = true;
+			}
+
+			if(normalGhost) return 3; //normalGhost is close
+			else if(edibleGhost) return 2; //edibleGhost is close
+		}
+		if(closestPillIndex != -1 && game.getNextMoveTowardsTarget(pacmanIndex, closestPillIndex, Constants.DM.PATH) == move){
+			return 1;//this way for pill
+		}
+
+		return 0; //Nothing
 	}
 
 	private MOVE getMoveBasedOnActionId(int actionId) {
