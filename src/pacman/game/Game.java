@@ -616,7 +616,7 @@ public final class Game
 			ghostEatMultiplier=1;
 			powerPills.clear(powerPillIndex);
 			
-			int newEdibleTime=(int)(EDIBLE_TIME*(Math.pow(EDIBLE_TIME_REDUCTION,levelCount%LEVEL_RESET_REDUCTION)));
+			int newEdibleTime = getNewEdibleTime();
 			
 			for(Ghost ghost : ghosts.values())
 				if(ghost.lairTime==0)
@@ -627,6 +627,8 @@ public final class Game
 			powerPillWasEaten=true;
 		}
 	}
+
+	public int getNewEdibleTime(){ return (int)(EDIBLE_TIME*(Math.pow(EDIBLE_TIME_REDUCTION,levelCount%LEVEL_RESET_REDUCTION))); }
 	
 	private boolean _reverseGhosts(EnumMap<GHOST,MOVE> moves,boolean force)
 	{

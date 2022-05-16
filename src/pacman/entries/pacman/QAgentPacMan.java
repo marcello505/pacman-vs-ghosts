@@ -24,10 +24,12 @@ import java.util.Set;
 public class QAgentPacMan extends Controller<MOVE>
 {
 	private final int startingState = 0;
+	private final int lifeLostPunishment = 1000;
 	private MOVE myMove=MOVE.NEUTRAL;
 	private QAgent agent;
 	private int lastScore = 0;
 	private int lastAction = 0;
+	private int lastLives = 0;
 
 	public QAgentPacMan(){
 		agent = new QAgent(4096, 4);
@@ -36,6 +38,8 @@ public class QAgentPacMan extends Controller<MOVE>
 	
 	public MOVE getMove(Game game, long timeDue) 
 	{
+		if(game.getPacmanNumberOfLivesRemaining() < lastLives) lastScore += lifeLostPunishment;
+		lastLives = game.getPacmanNumberOfLivesRemaining();
 		agent.update(lastAction, convertGameStateToInt(game, true), game.getScore() - lastScore);
 		lastScore = game.getScore();
 
@@ -48,7 +52,7 @@ public class QAgentPacMan extends Controller<MOVE>
 	}
 
 	public void gameOver(){
-		agent.update(lastAction, -1, -1000);
+		agent.update(lastAction, -1, -lifeLostPunishment);
 		lastScore = 0;
 		agent.start(startingState);
 	}
@@ -164,22 +168,24 @@ public class QAgentPacMan extends Controller<MOVE>
 
 		if((inkyDistance != -1 && inkyDistance < DANGER_DISTANCE) || (blinkyDistance != -1 && blinkyDistance < DANGER_DISTANCE) || ( pinkyDistance != -1 && pinkyDistance < DANGER_DISTANCE) || ( sueDistance != -1 && sueDistance < DANGER_DISTANCE)){
 			//Ghost is close
+			final int EDIBLE_THRESHOLD = game.getNewEdibleTime() / 20;
+//			final int EDIBLE_THRESHOLD = 0;
 			boolean normalGhost = false;
 			boolean edibleGhost = false;
 			if (inkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, inkyIndex, Constants.DM.PATH) == move){
-				if(game.getGhostEdibleTime(Constants.GHOST.INKY) > 0) edibleGhost = true;
+				if(game.getGhostEdibleTime(Constants.GHOST.INKY) > EDIBLE_THRESHOLD) edibleGhost = true;
 				else normalGhost = true;
 			}
 			if (blinkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, blinkyIndex, Constants.DM.PATH) == move){
-				if(game.getGhostEdibleTime(Constants.GHOST.BLINKY) > 0) edibleGhost = true;
+				if(game.getGhostEdibleTime(Constants.GHOST.BLINKY) > EDIBLE_THRESHOLD) edibleGhost = true;
 				else normalGhost = true;
 			}
 			if (pinkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, pinkyIndex, Constants.DM.PATH) == move){
-				if(game.getGhostEdibleTime(Constants.GHOST.PINKY) > 0) edibleGhost = true;
+				if(game.getGhostEdibleTime(Constants.GHOST.PINKY) > EDIBLE_THRESHOLD) edibleGhost = true;
 				else normalGhost = true;
 			}
 			if (sueDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, sueIndex, Constants.DM.PATH) == move){
-				if(game.getGhostEdibleTime(Constants.GHOST.SUE) > 0) edibleGhost = true;
+				if(game.getGhostEdibleTime(Constants.GHOST.SUE) > EDIBLE_THRESHOLD) edibleGhost = true;
 				else normalGhost = true;
 			}
 
