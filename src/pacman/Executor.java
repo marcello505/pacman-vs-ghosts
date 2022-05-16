@@ -67,7 +67,7 @@ public class Executor
 //		qAgentPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/500000_gen_short_starter_noMoveBack.json");
 //		exec.runGameTimed(qAgentPacMan, new StarterGhosts(), visual);
 		exec.runExperiment(qAgentPacMan, new StarterGhosts(), 500000);
-		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone40/500000_short_starter_noMoveBack.json");
+		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallStateV2/500000_short_starter_noMoveBack_noEdibleThreshold.json");
 //		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_starterghosts.json");
 //		exec.runGameTimed(qLearnerPacMan, new StarterGhosts(), visual);
 

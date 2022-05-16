@@ -59,10 +59,10 @@ public class QAgentPacMan extends Controller<MOVE>
 		int pacmanNode = game.getPacmanCurrentNodeIndex();
 
 		if(simpleState){
-			result += getSimpleNeighborStatus(game, MOVE.LEFT) << 2 * 0;
-			result += getSimpleNeighborStatus(game, MOVE.RIGHT) << 2 * 1;
-			result += getSimpleNeighborStatus(game, MOVE.UP) << 2 * 2;
-			result += getSimpleNeighborStatus(game, MOVE.DOWN) << 2 * 3;
+			result += getSimpleNeighborStatus(game, MOVE.LEFT) << 3 * 0;
+			result += getSimpleNeighborStatus(game, MOVE.RIGHT) << 3 * 1;
+			result += getSimpleNeighborStatus(game, MOVE.UP) << 3 * 2;
+			result += getSimpleNeighborStatus(game, MOVE.DOWN) << 3 * 3;
 
 		}
 		else{
@@ -154,40 +154,40 @@ public class QAgentPacMan extends Controller<MOVE>
 		int sueIndex = game.getGhostCurrentNodeIndex(Constants.GHOST.SUE);
 		int sueDistance = game.getShortestPathDistance(pacmanIndex, sueIndex);
 
-		//Get closestPill
-		int[] activePills = game.getActivePillsIndices();
-		int[] activePowerPills = game.getActivePowerPillsIndices();
-		int[] combinedPillIndices = new int[activePills.length + activePowerPills.length];
-		System.arraycopy(activePills, 0, combinedPillIndices, 0, activePills.length);
-		System.arraycopy(activePowerPills, 0, combinedPillIndices, activePills.length, activePowerPills.length);
-		int closestPillIndex = game.getClosestNodeIndexFromNodeIndex(game.getPacmanCurrentNodeIndex(), combinedPillIndices, Constants.DM.PATH);
+		//Get closestPills
+		int closestPowerPill = game.getClosestNodeIndexFromNodeIndex(pacmanIndex, game.getActivePowerPillsIndices(), Constants.DM.PATH);
+		int closestRegularPill = game.getClosestNodeIndexFromNodeIndex(pacmanIndex, game.getActivePillsIndices(), Constants.DM.PATH);
 
 		if((inkyDistance != -1 && inkyDistance < DANGER_DISTANCE) || (blinkyDistance != -1 && blinkyDistance < DANGER_DISTANCE) || ( pinkyDistance != -1 && pinkyDistance < DANGER_DISTANCE) || ( sueDistance != -1 && sueDistance < DANGER_DISTANCE)){
 			//Ghost is close
+			final int SAFE_EDIBLE_TIME = 0; //25% of the new edibleTime.
 			boolean normalGhost = false;
 			boolean edibleGhost = false;
 			if (inkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, inkyIndex, Constants.DM.PATH) == move){
-				if(game.getGhostEdibleTime(Constants.GHOST.INKY) > 0) edibleGhost = true;
+				if(game.getGhostEdibleTime(Constants.GHOST.INKY) > SAFE_EDIBLE_TIME) edibleGhost = true;
 				else normalGhost = true;
 			}
 			if (blinkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, blinkyIndex, Constants.DM.PATH) == move){
-				if(game.getGhostEdibleTime(Constants.GHOST.BLINKY) > 0) edibleGhost = true;
+				if(game.getGhostEdibleTime(Constants.GHOST.BLINKY) > SAFE_EDIBLE_TIME) edibleGhost = true;
 				else normalGhost = true;
 			}
 			if (pinkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, pinkyIndex, Constants.DM.PATH) == move){
-				if(game.getGhostEdibleTime(Constants.GHOST.PINKY) > 0) edibleGhost = true;
+				if(game.getGhostEdibleTime(Constants.GHOST.PINKY) > SAFE_EDIBLE_TIME) edibleGhost = true;
 				else normalGhost = true;
 			}
 			if (sueDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, sueIndex, Constants.DM.PATH) == move){
-				if(game.getGhostEdibleTime(Constants.GHOST.SUE) > 0) edibleGhost = true;
+				if(game.getGhostEdibleTime(Constants.GHOST.SUE) > SAFE_EDIBLE_TIME) edibleGhost = true;
 				else normalGhost = true;
 			}
 
-			if(normalGhost) return 3; //normalGhost is close
-			else if(edibleGhost) return 2; //edibleGhost is close
+			if(normalGhost) return 4; //normalGhost is close
+			else if(edibleGhost) return 3; //edibleGhost is close
 		}
-		if(closestPillIndex != -1 && game.getNextMoveTowardsTarget(pacmanIndex, closestPillIndex, Constants.DM.PATH) == move){
-			return 1;//this way for pill
+		if(closestPowerPill != -1 && game.getNextMoveTowardsTarget(pacmanIndex, closestPowerPill, Constants.DM.PATH) == move){
+			return 2;//this way for powerpill
+		}
+		if(closestRegularPill != -1 && game.getNextMoveTowardsTarget(pacmanIndex, closestRegularPill, Constants.DM.PATH) == move){
+			return 1;//this way for normal pill
 		}
 
 		return 0; //Nothing
