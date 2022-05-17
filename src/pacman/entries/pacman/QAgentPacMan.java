@@ -31,6 +31,7 @@ public class QAgentPacMan extends Controller<MOVE>
 	private int lastAction = 0;
 	private int lastLives = 0;
 	private QAgentMovementBehavior agentMovementBehavior;
+	private StateType stateType;
 
 	public enum QAgentMovementBehavior{
 		NoMoveBack,
@@ -38,9 +39,15 @@ public class QAgentPacMan extends Controller<MOVE>
 		MoveBackAtJunction
 	}
 
-	public QAgentPacMan(QAgentMovementBehavior movementBehavior){
+	public enum StateType{
+		SmallState,
+		HashedState
+	}
+
+	public QAgentPacMan(QAgentMovementBehavior movementBehavior, StateType stateType){
 		this.agentMovementBehavior = movementBehavior;
-		agent = new QAgent(4096, 4);
+		this.stateType = stateType;
+		agent = new QAgent(stateType == StateType.SmallState ? 4096 : Integer.MAX_VALUE, 4);
 		agent.start(startingState);
 	}
 	
@@ -49,7 +56,8 @@ public class QAgentPacMan extends Controller<MOVE>
 		//Update model
 		if(game.getPacmanNumberOfLivesRemaining() < lastLives) lastScore += lifeLostPunishment;
 		lastLives = game.getPacmanNumberOfLivesRemaining();
-		agent.update(lastAction, convertGameStateToInt(game, true), game.getScore() - lastScore);
+		if(stateType == StateType.SmallState) agent.update(lastAction, convertGameStateToInt(game, true), game.getScore() - lastScore);
+		else agent.update(lastAction, game.getGameState().hashCode(), game.getScore() - lastScore); //Hashed state
 		lastScore = game.getScore();
 
 		//Get Action
@@ -181,7 +189,6 @@ public class QAgentPacMan extends Controller<MOVE>
 		if((inkyDistance != -1 && inkyDistance < DANGER_DISTANCE) || (blinkyDistance != -1 && blinkyDistance < DANGER_DISTANCE) || ( pinkyDistance != -1 && pinkyDistance < DANGER_DISTANCE) || ( sueDistance != -1 && sueDistance < DANGER_DISTANCE)){
 			//Ghost is close
 			final int EDIBLE_THRESHOLD = game.getNewEdibleTime() / 20;
-//			final int EDIBLE_THRESHOLD = 0;
 			boolean normalGhost = false;
 			boolean edibleGhost = false;
 			if (inkyDistance < DANGER_DISTANCE && game.getNextMoveTowardsTarget(pacmanIndex, inkyIndex, Constants.DM.PATH) == move){

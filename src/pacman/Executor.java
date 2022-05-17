@@ -41,53 +41,10 @@ public class Executor
 	public static void main(String[] args)
 	{
 		Executor exec=new Executor();
-
-		/*
-		//run multiple games in batch mode - good for testing.
-		int numTrials=10;
-		exec.runExperiment(new RandomPacMan(),new RandomGhosts(),numTrials);
-		 */
-		
-		/*
-		//run a game in synchronous mode: game waits until controllers respond.
-		int delay=5;
 		boolean visual=true;
-		exec.runGame(new RandomPacMan(),new RandomGhosts(),visual,delay);
-  		 */
-		
-		///*
-		//run the game in asynchronous mode.
-		boolean visual=true;
-//		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
-//		exec.runGameTimed(new StarterPacMan(),new StarterGhosts(),visual);
-//		exec.runGameTimed(new HumanController(new KeyBoardInput()),new MyGhosts(),visual);
-//		QLearnerPacMan qLearnerPacMan = new QLearnerPacMan();
-//		qLearnerPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_randomghosts.json");
-		QAgentPacMan qAgentPacMan = new QAgentPacMan(QAgentPacMan.QAgentMovementBehavior.NoMoveBack);
+		QAgentPacMan qAgentPacMan = new QAgentPacMan(QAgentPacMan.QAgentMovementBehavior.NoMoveBack, QAgentPacMan.StateType.SmallState);
 		qAgentPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone32/FINAL/5000000_long_starter_noMoveBack.json");
 		exec.runGameTimed(qAgentPacMan, new StarterGhosts(), visual);
-//		exec.runExperiment(qAgentPacMan, new StarterGhosts(), 5000000, false);
-//		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone32/FINAL/5000000_long_starter_moveBack.json");
-//		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_starterghosts.json");
-//		exec.runGameTimed(qLearnerPacMan, new StarterGhosts(), visual);
-
-		//*/
-		
-		/*
-		//run the game in asynchronous mode but advance as soon as both controllers are ready  - this is the mode of the competition.
-		//time limit of DELAY ms still applies.
-//		boolean visual=true;
-		boolean fixedTime=false;
-		exec.runGameTimedSpeedOptimised(new RandomPacMan(),new RandomGhosts(),fixedTime,visual);
-		*/
-		
-		/*
-		//run game in asynchronous mode and record it to file for replay at a later stage.
-		boolean visual=true;
-		String fileName="replay.txt";
-		exec.runGameTimedRecorded(new HumanController(new KeyBoardInput()),new RandomGhosts(),visual,fileName);
-		//exec.replayGame(fileName,visual);
-		 */
 	}
 	
     /**
