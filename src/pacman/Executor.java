@@ -64,10 +64,10 @@ public class Executor
 //		QLearnerPacMan qLearnerPacMan = new QLearnerPacMan();
 //		qLearnerPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_randomghosts.json");
 		QAgentPacMan qAgentPacMan = new QAgentPacMan();
-//		qAgentPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/500000_gen_short_starter_noMoveBack.json");
+//		qAgentPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone32/FINAL/5000000_long_starter_noMoveBack.json");
 //		exec.runGameTimed(qAgentPacMan, new StarterGhosts(), visual);
-		exec.runExperiment(qAgentPacMan, new StarterGhosts(), 500000);
-		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone40/500000_short_starter_noMoveBack.json");
+		exec.runExperiment(qAgentPacMan, new StarterGhosts(), 5000000, false);
+		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone32/FINAL/5000000_long_starter_noMoveBack.json");
 //		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_starterghosts.json");
 //		exec.runGameTimed(qLearnerPacMan, new StarterGhosts(), visual);
 
@@ -101,7 +101,7 @@ public class Executor
      * @param trials The number of trials to be executed
      */
 
-    public void runExperiment(Controller<MOVE> pacManController,Controller<EnumMap<GHOST,MOVE>> ghostController,int trials)
+    public void runExperiment(Controller<MOVE> pacManController,Controller<EnumMap<GHOST,MOVE>> ghostController,int trials, boolean shortGames)
     {
     	double avgScore=0;
     	
@@ -111,7 +111,7 @@ public class Executor
 		for(int i=0;i<trials;i++)
 		{
 			game=new Game(rnd.nextLong());
-			game.pacman.numberOfLivesRemaining = 1;
+			if(shortGames) game.pacman.numberOfLivesRemaining = 1;
 
 
 			while(!game.gameOver())
