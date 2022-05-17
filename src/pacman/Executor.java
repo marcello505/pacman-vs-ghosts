@@ -63,11 +63,11 @@ public class Executor
 //		exec.runGameTimed(new HumanController(new KeyBoardInput()),new MyGhosts(),visual);
 //		QLearnerPacMan qLearnerPacMan = new QLearnerPacMan();
 //		qLearnerPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_randomghosts.json");
-		QAgentPacMan qAgentPacMan = new QAgentPacMan();
-//		qAgentPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone32/FINAL/5000000_long_starter_noMoveBack.json");
-//		exec.runGameTimed(qAgentPacMan, new StarterGhosts(), visual);
-		exec.runExperiment(qAgentPacMan, new StarterGhosts(), 5000000, false);
-		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone32/FINAL/5000000_long_starter_noMoveBack.json");
+		QAgentPacMan qAgentPacMan = new QAgentPacMan(QAgentPacMan.QAgentMovementBehavior.NoMoveBack);
+		qAgentPacMan.loadModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone32/FINAL/5000000_long_starter_noMoveBack.json");
+		exec.runGameTimed(qAgentPacMan, new StarterGhosts(), visual);
+//		exec.runExperiment(qAgentPacMan, new StarterGhosts(), 5000000, false);
+//		qAgentPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/QAgentPacman/SmallState/dangerzone32/FINAL/5000000_long_starter_moveBack.json");
 //		qLearnerPacMan.saveModel("/home/marcello/GitHub/pacman-vs-ghosts/models/5000000_generations_short_starterghosts.json");
 //		exec.runGameTimed(qLearnerPacMan, new StarterGhosts(), visual);
 

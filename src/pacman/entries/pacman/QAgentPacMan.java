@@ -30,21 +30,33 @@ public class QAgentPacMan extends Controller<MOVE>
 	private int lastScore = 0;
 	private int lastAction = 0;
 	private int lastLives = 0;
+	private QAgentMovementBehavior agentMovementBehavior;
 
-	public QAgentPacMan(){
+	public enum QAgentMovementBehavior{
+		NoMoveBack,
+		MoveBackAllowed,
+		MoveBackAtJunction
+	}
+
+	public QAgentPacMan(QAgentMovementBehavior movementBehavior){
+		this.agentMovementBehavior = movementBehavior;
 		agent = new QAgent(4096, 4);
 		agent.start(startingState);
 	}
 	
 	public MOVE getMove(Game game, long timeDue) 
 	{
+		//Update model
 		if(game.getPacmanNumberOfLivesRemaining() < lastLives) lastScore += lifeLostPunishment;
 		lastLives = game.getPacmanNumberOfLivesRemaining();
 		agent.update(lastAction, convertGameStateToInt(game, true), game.getScore() - lastScore);
 		lastScore = game.getScore();
 
-//		Set<Integer> possibleActions = getPossibleMovesBasedOnGameState(game, game.isJunction(game.getPacmanCurrentNodeIndex()));
-		Set<Integer> possibleActions = getPossibleMovesBasedOnGameState(game, false);
+		//Get Action
+		Set<Integer> possibleActions;
+		if(agentMovementBehavior == QAgentMovementBehavior.NoMoveBack) possibleActions = getPossibleMovesBasedOnGameState(game, false);
+		else if(agentMovementBehavior == QAgentMovementBehavior.MoveBackAtJunction) possibleActions = getPossibleMovesBasedOnGameState(game, game.isJunction(game.getPacmanCurrentNodeIndex()));
+		else possibleActions = getPossibleMovesBasedOnGameState(game, true);
 		lastAction = agent.selectAction(possibleActions).getIndex();
 		myMove = getMoveBasedOnActionId(lastAction);
 
