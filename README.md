@@ -1,11 +1,16 @@
-# Pacman vs Ghosts Simulator v6.2
+# FORK INFO
+This fork was made in order to create and test a Q-learning bot that can play pac-man. This was done for an AI course for my school and won't be contributed to any further.\
+-Marcello505
+
+# Original Description
+## Pacman vs Ghosts Simulator v6.2
 
 A Java implementation of the game [Ms. Pac-Man](https://en.wikipedia.org/wiki/Ms._Pac-Man)
 for the *Ms Pac-Man vs Ghosts Competition* that ran in 2011-2012. The code is written by [Philipp Rohlfshagen](https://www.linkedin.com/in/philipp-rohlfshagen-6b602219)
 based on earlier implementations of the game by [Simon Lucas](http://dces.essex.ac.uk/staff/lucas/) 
 and [David Robles](https://www.linkedin.com/in/drobles).
 
-# Run Software
+## Run Software
 
 ##1. Download
 
@@ -28,7 +33,7 @@ Executor.java
 
 This class contains a main method with numerous options for execution. Just uncomment the one you wish to run.
 
-# Start Coding
+## Start Coding
 
 #1. Inspect the Files
 
